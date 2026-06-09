@@ -1,9 +1,14 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { AnalyticsTracker } from "@/lib/analytics/AnalyticsTracker";
+import { Navbar } from "@/components/layout/Navbar";
 import "./globals.css";
+
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
+  subsets: ["latin"],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,11 +34,15 @@ export default function RootLayout({
     <ClerkProvider>
       <html
         lang="en"
-        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${jakarta.variable} h-full antialiased`}
+        suppressHydrationWarning
       >
-        <body className="min-h-full flex flex-col">
+        <body className="min-h-full flex flex-col font-sans">
           <AnalyticsTracker />
-          {children}
+          <Navbar />
+          <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full">
+            {children}
+          </main>
         </body>
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || "GTM-XXXXXXX"} />
       </html>
