@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String           @id @default(uuid())
+  clerk_id               String           @unique
+  email                  String           @unique
+  name                   String?
+  financial_health_score Int              @default(0)
+  last_active_at         DateTime         @default(now())
+  created_at             DateTime         @default(now())
+  updated_at             DateTime         @updatedAt
+  groups                 GroupMember[]
+  expenses_created       Expense[]
+  splits                 ExpenseSplit[]
+  settlements_paid       Settlement[]     @relation("Payer")
+  settlements_received   Settlement[]     @relation("Payee")
+  analytics_events       AnalyticsEvent[]
+  insights               AiInsight[]      @relation("UserInsights")
+}
+
+model Group {
+  id         String        @id @default(uuid())
+  name       String
+  created_at DateTime      @default(now())
+  updated_at DateTime      @updatedAt
+  members    GroupMember[]
+  expenses   Expense[]
+  insights   AiInsight[]   @relation("GroupInsights")
+}
+
+model GroupMember {
+  id         String   @id @default(uuid())
+  user_id    String
+  group_id   String
+  role       String   @default("MEMBER") // ADMIN, MEMBER
+  joined_at  DateTime @default(now())
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  group      Group    @relation(fields: [group_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, group_id])
+}
+
+model Expense {
+  id                     String         @id @default(uuid())
+  group_id               String
+  created_by             String
+  amount                 Float
+  currency               String         @default("USD")
+  category               String
+  date                   DateTime       @default(now())
+  description            String
+  receipt_url            String?
+  ai_category_confidence Float?
+  created_at             DateTime       @default(now())
+  updated_at             DateTime       @updatedAt
+  group                  Group          @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  creator                User           @relation(fields: [created_by], references: [id], onDelete: Cascade)
+  splits                 ExpenseSplit[]
+}
+
+model ExpenseSplit {
+  id          String   @id @default(uuid())
+  expense_id  String
+  user_id     String
+  amount_owed Float
+  expense     Expense  @relation(fields: [expense_id], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([expense_id, user_id])
+}
+
+model Settlement {
+  id             String    @id @default(uuid())
+  payer_id       String
+  payee_id       String
+  amount         Float
+  currency       String    @default("USD")
+  status         String    @default("PENDING") // PENDING, COMPLETED, FAILED
+  settled_at     DateTime?
+  payment_method String?
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  payer          User      @relation("Payer", fields: [payer_id], references: [id], onDelete: Cascade)
+  payee          User      @relation("Payee", fields: [payee_id], references: [id], onDelete: Cascade)
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(uuid())
+  event_name String
+  user_id    String?
+  session_id String?
+  source     String?
+  page_path  String?
+  metadata   Json?
+  timestamp  DateTime @default(now())
+  user       User?    @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([event_name])
+  @@index([user_id])
+  @@index([timestamp])
+}
+
+model AiInsight {
+  id           String   @id @default(uuid())
+  user_id      String?
+  group_id     String?
+  insight_type String   // MONTHLY_SUMMARY, SPENDING_ALERT, HEALTH_SCORE
+  content      String
+  confidence   Float
+  generated_at DateTime @default(now())
+  user         User?    @relation("UserInsights", fields: [user_id], references: [id], onDelete: Cascade)
+  group        Group?   @relation("GroupInsights", fields: [group_id], references: [id], onDelete: Cascade)
+}
