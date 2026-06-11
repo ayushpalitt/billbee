@@ -111,7 +111,10 @@ export function DashboardView({
     : "No recent transactions found. Start using BillBee to get personalized AI insights and health scores.";
 
   return (
-    <div className="flex-1 bg-slate-50 dark:bg-slate-950 px-6 pt-32 pb-10 md:px-10 md:pt-32 font-sans min-h-screen">
+    <div className="flex-1 bg-slate-50 dark:bg-slate-950 dark:bg-cyber-hive px-6 pt-32 pb-10 md:px-10 md:pt-32 font-sans min-h-screen relative overflow-hidden">
+      
+      {/* Background Ambient Glow */}
+      <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-amber-500/5 rounded-full blur-[150px] pointer-events-none hidden dark:block" />
       
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-4 max-w-[1600px] mx-auto">
@@ -125,7 +128,7 @@ export function DashboardView({
           <select 
             value={timeframe}
             onChange={(e) => setTimeframe(e.target.value)}
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm font-semibold rounded-lg px-4 py-2 outline-none hover:border-slate-300 transition-colors cursor-pointer shadow-sm text-slate-700 dark:text-slate-300"
+            className="glass-panel font-semibold rounded-lg px-4 py-2 outline-none hover:border-slate-300 transition-colors cursor-pointer shadow-sm text-slate-700 dark:text-slate-300"
           >
             <option>Last 30 Days</option>
             <option>This Month</option>
@@ -134,7 +137,7 @@ export function DashboardView({
           </select>
           <Link
             href="/groups"
-            className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm"
+            className="flex items-center gap-2 glass-panel text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm"
           >
             <UsersRound className="w-4 h-4" /> Manage Groups
           </Link>
@@ -147,9 +150,9 @@ export function DashboardView({
               trackEvent("pdf_export", { source: "dashboard" });
               generatePdfReport(recentTransactions, "User");
             }}
-            className="flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md"
+            className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-5 py-2 text-sm font-bold transition-all shadow-md hover:glow-amber clip-hex"
           >
-            <Download className="w-4 h-4" /> Export
+            <Download className="w-4 h-4" /> Export PDF
           </button>
         </div>
       </div>
@@ -161,33 +164,33 @@ export function DashboardView({
           
           {/* KPI Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm hover:shadow-md hover:border-red-400/50 transition-all group">
+            <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:[0, -4, 0]}} transition={{y: {repeat: Infinity, duration: 4, ease: "easeInOut"}}} className="p-6 rounded-2xl glass-panel group relative z-10">
               <div className="flex justify-between items-start mb-4">
-                <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg text-red-600 dark:text-red-400"><Wallet className="w-5 h-5"/></div>
+                <div className="p-3 bg-red-500/10 rounded-xl text-red-500 clip-hex group-hover:glow-amber transition-all"><Wallet className="w-5 h-5"/></div>
                 <span className="flex items-center text-xs font-bold text-red-500 bg-red-50 dark:bg-red-500/10 px-2 py-1 rounded-full"><ArrowUpRight className="w-3 h-3 mr-1"/> 12%</span>
               </div>
-              <p className="text-slate-500 text-sm font-medium mb-1">Total Expenses</p>
-              <h3 className="text-3xl font-extrabold font-jakarta text-slate-900 dark:text-white"><CountUp prefix="$" end={totalExpenses} /></h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1 uppercase tracking-wider">Total Expenses</p>
+              <h3 className="text-3xl font-extrabold font-jakarta text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500"><CountUp prefix="$" end={totalExpenses} /></h3>
             </motion.div>
 
-            <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.1}} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm hover:shadow-md hover:border-blue-400/50 transition-all group">
+            <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:[0, -3, 0]}} transition={{delay: 0.1, y: {repeat: Infinity, duration: 4.5, ease: "easeInOut"}}} className="p-6 rounded-2xl glass-panel group relative z-10">
               <div className="flex justify-between items-start mb-4">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"><Receipt className="w-5 h-5"/></div>
-                {isDataLoaded && <span className="flex items-center text-xs font-bold text-blue-500 bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded-full"><ArrowDownRight className="w-3 h-3 mr-1"/> 4%</span>}
+                <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-500 clip-hex group-hover:glow-emerald transition-all"><Receipt className="w-5 h-5"/></div>
+                {isDataLoaded && <span className="flex items-center text-xs font-bold text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded-full"><ArrowDownRight className="w-3 h-3 mr-1"/> 4%</span>}
               </div>
-              <p className="text-slate-500 text-sm font-medium mb-1">Owed to You</p>
-              <h3 className="text-3xl font-extrabold font-jakarta text-slate-900 dark:text-white"><CountUp prefix="$" end={owedToYou} /></h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1 uppercase tracking-wider">Owed to You</p>
+              <h3 className="text-3xl font-extrabold font-jakarta text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400"><CountUp prefix="$" end={owedToYou} /></h3>
             </motion.div>
 
-            <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.2}} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm hover:shadow-md hover:border-honey-yellow/50 transition-all group">
+            <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:[0, -5, 0]}} transition={{delay: 0.2, y: {repeat: Infinity, duration: 3.8, ease: "easeInOut"}}} className="p-6 rounded-2xl glass-panel group relative z-10">
               <div className="flex justify-between items-start mb-4">
-                <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg text-yellow-600 dark:text-yellow-400"><Users className="w-5 h-5"/></div>
+                <div className="p-3 bg-amber-500/10 rounded-xl text-amber-500 clip-hex group-hover:glow-amber transition-all"><Users className="w-5 h-5"/></div>
               </div>
-              <p className="text-slate-500 text-sm font-medium mb-1">Active Groups</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1 uppercase tracking-wider">Active Hives</p>
               <h3 className="text-3xl font-extrabold font-jakarta text-slate-900 dark:text-white"><CountUp end={activeGroups} /></h3>
             </motion.div>
 
-            <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.3}} className="bg-gradient-to-br from-bee-green to-emerald-500 p-6 rounded-2xl border border-emerald-400 shadow-lg shadow-bee-green/20 relative overflow-hidden group">
+            <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:[0, -2, 0]}} transition={{delay: 0.3, y: {repeat: Infinity, duration: 4.2, ease: "easeInOut"}}} className="bg-gradient-to-br from-amber-500 to-orange-600 p-6 rounded-2xl border border-amber-400 shadow-lg shadow-amber-500/20 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 blur-2xl rounded-full transform translate-x-1/2 -translate-y-1/2" />
               <div className="flex justify-between items-start mb-4 relative z-10">
                 <div className="p-2 bg-white/20 rounded-lg text-white"><Activity className="w-5 h-5"/></div>
@@ -203,7 +206,7 @@ export function DashboardView({
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Area Chart */}
-            <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} transition={{delay: 0.4}} className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+            <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} transition={{delay: 0.4}} className="lg:col-span-2 p-6 rounded-2xl glass-panel relative z-10">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold font-jakarta text-slate-900 dark:text-white">Expense vs Savings</h3>
               </div>
@@ -231,7 +234,7 @@ export function DashboardView({
             </motion.div>
 
             {/* Donut Chart */}
-            <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} transition={{delay: 0.5}} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm flex flex-col">
+            <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} transition={{delay: 0.5}} className="p-6 rounded-2xl glass-panel flex flex-col relative z-10">
               <h3 className="text-lg font-bold font-jakarta text-slate-900 dark:text-white mb-2">Category Breakdown</h3>
               <div className="flex-1 min-h-[250px] relative flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
@@ -253,7 +256,7 @@ export function DashboardView({
           </div>
 
           {/* Recent Transactions Table */}
-          <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.6}} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm overflow-hidden">
+          <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.6}} className="glass-panel rounded-2xl shadow-sm overflow-hidden relative z-10">
             <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
               <h3 className="text-lg font-bold font-jakarta text-slate-900 dark:text-white">Recent Transactions</h3>
               <button className="text-sm font-semibold text-blue-600 hover:text-blue-700">View All</button>
@@ -308,7 +311,7 @@ export function DashboardView({
         </div>
 
         {/* AI Insights Right Panel */}
-        <motion.div initial={{opacity:0, x:20}} animate={{opacity:1, x:0}} transition={{delay: 0.7}} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white p-6 rounded-3xl shadow-xl border border-slate-200/50 dark:border-slate-800/50 relative overflow-hidden flex flex-col xl:h-[calc(100vh-160px)] xl:sticky top-32">
+        <motion.div initial={{opacity:0, x:20}} animate={{opacity:1, x:0}} transition={{delay: 0.7}} className="glass-panel text-slate-900 dark:text-white p-6 rounded-3xl shadow-xl relative overflow-hidden flex flex-col xl:h-[calc(100vh-160px)] xl:sticky top-32 z-10">
           <div className="absolute top-0 right-0 w-64 h-64 bg-bee-green/10 blur-[80px] rounded-full pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none" />
           

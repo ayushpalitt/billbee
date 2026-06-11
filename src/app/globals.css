@@ -128,3 +128,27 @@
     @apply font-sans;
   }
 }
+
+@layer utilities {
+  .clip-hex {
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+
+  .bg-cyber-hive {
+    background-color: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='103.92304845413264' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 103.92304845413264L0 86.60254037844386V51.96152422706632L30 34.64101615137754L60 51.96152422706632V86.60254037844386zM30 69.28203230275508L0 51.96152422706632V17.320508075688775L30 0L60 17.320508075688775V51.96152422706632z' fill='rgba(245, 158, 11, 0.02)' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-size: 60px 103.92px;
+  }
+
+  .glow-amber {
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+  }
+
+  .glow-emerald {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+  }
+  
+  .glass-panel {
+    @apply bg-white/5 dark:bg-black/30 backdrop-blur-2xl border border-white/20 dark:border-amber-500/10 shadow-xl;
+  }
+}

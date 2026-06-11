@@ -7,6 +7,8 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState } from "react";
 import { Settings } from "lucide-react";
 
+import { ThemeToggle } from "./ThemeToggle";
+
 export function Navbar() {
   const { isSignedIn } = useUser();
   const pathname = usePathname();
@@ -63,6 +65,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center space-x-3">
+          <ThemeToggle />
           {isSignedIn ? (
             <UserButton afterSignOutUrl="/">
               <UserButton.MenuItems>

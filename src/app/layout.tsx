@@ -4,6 +4,7 @@ import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { AnalyticsTracker } from "@/lib/analytics/AnalyticsTracker";
 import { Navbar } from "@/components/layout/Navbar";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -39,11 +40,13 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <body className="min-h-full flex flex-col font-sans">
-          <AnalyticsTracker />
-          <Navbar />
-          <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full">
-            {children}
-          </main>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <AnalyticsTracker />
+            <Navbar />
+            <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full">
+              {children}
+            </main>
+          </ThemeProvider>
         </body>
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || "GTM-XXXXXXX"} />
       </html>
