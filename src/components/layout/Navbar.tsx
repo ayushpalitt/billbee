@@ -27,10 +27,10 @@ export function Navbar() {
         </Link>
         
         <div className="hidden md:flex items-center space-x-8">
-          <Link href="/#features" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">Features</Link>
-          <Link href="/#how-it-works" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">How It Works</Link>
-          <Link href="/#ai-insights" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">AI Insights</Link>
-          <Link href="/#pricing" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">Pricing</Link>
+          <Link href="/features" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">Features</Link>
+          <Link href="/how-it-works" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">How It Works</Link>
+          <Link href="/ai-insights" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">AI Insights</Link>
+          <Link href="/pricing" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">Pricing</Link>
           {isSignedIn && (
             <Link href="/dashboard" className="text-sm font-bold font-jakarta text-green-600 hover:text-green-700 transition-colors">Dashboard</Link>
           )}

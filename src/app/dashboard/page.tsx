@@ -3,6 +3,7 @@ import { generateMonthlyInsights } from '@/lib/ai/insights';
 import { calculateFinancialHealthScore, getHealthScoreCategory } from '@/lib/ai/health-score';
 import { DashboardView } from '@/components/dashboard/DashboardView';
 import { redirect } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -16,6 +17,57 @@ export default async function DashboardPage() {
   const score = await calculateFinancialHealthScore(userId).catch(() => 85);
   const scoreCategory = getHealthScoreCategory(score);
 
+  const [
+    totalExpensesResult,
+    owedToYouResult,
+    activeGroupsResult,
+    recentTransactionsResult
+  ] = await Promise.all([
+    prisma.expenseSplit.aggregate({
+      _sum: { amount_owed: true },
+      where: { user_id: userId }
+    }),
+    prisma.expenseSplit.aggregate({
+      _sum: { amount_owed: true },
+      where: {
+        expense: { created_by: userId },
+        user_id: { not: userId }
+      }
+    }),
+    prisma.groupMember.count({
+      where: { user_id: userId }
+    }),
+    prisma.expense.findMany({
+      where: { group: { members: { some: { user_id: userId } } } },
+      orderBy: { created_at: 'desc' },
+      take: 5,
+      include: { group: true }
+    })
+  ]);
+
+  const totalExpenses = totalExpensesResult._sum.amount_owed || 0;
+  const owedToYou = owedToYouResult._sum.amount_owed || 0;
+  const activeGroups = activeGroupsResult;
+
+  const recentTransactions = recentTransactionsResult.map(tx => ({
+    title: tx.description,
+    group: tx.group.name,
+    date: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(tx.created_at),
+    amount: new Intl.NumberFormat('en-US', { style: 'currency', currency: tx.currency }).format(tx.amount),
+    status: 'Pending'
+  }));
+
+  // Empty charts for now to ensure clean slate
+  const monthlyData = [
+    { name: 'Jan', expenses: 0, savings: 0 },
+    { name: 'Feb', expenses: 0, savings: 0 },
+    { name: 'Mar', expenses: 0, savings: 0 },
+    { name: 'Apr', expenses: 0, savings: 0 },
+    { name: 'May', expenses: 0, savings: 0 },
+    { name: 'Jun', expenses: 0, savings: 0 },
+  ];
+  const categoryData = [{ name: 'No Data', value: 1 }];
+
   return (
     <DashboardView 
       mock={false}
@@ -23,6 +75,12 @@ export default async function DashboardPage() {
       healthScore={score} 
       healthScoreCategory={scoreCategory} 
       insight={insight?.content} 
+      totalExpenses={totalExpenses}
+      owedToYou={owedToYou}
+      activeGroups={activeGroups}
+      recentTransactions={recentTransactions}
+      monthlyData={monthlyData}
+      categoryData={categoryData}
     />
   );
 }

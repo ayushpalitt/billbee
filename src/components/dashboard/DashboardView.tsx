@@ -6,22 +6,6 @@ import { trackEvent } from "@/lib/analytics/track-event";
 import { useEffect, useState } from "react";
 import { Activity, TrendingUp, AlertCircle, CheckCircle2, ArrowUpRight, ArrowDownRight, Wallet, Users, Receipt, Download } from "lucide-react";
 
-// Mock Data
-const monthlyData = [
-  { name: 'Jan', expenses: 400, savings: 240 },
-  { name: 'Feb', expenses: 300, savings: 139 },
-  { name: 'Mar', expenses: 550, savings: 980 },
-  { name: 'Apr', expenses: 450, savings: 390 },
-  { name: 'May', expenses: 700, savings: 480 },
-  { name: 'Jun', expenses: 600, savings: 380 },
-];
-
-const categoryData = [
-  { name: 'Food', value: 400 },
-  { name: 'Travel', value: 300 },
-  { name: 'Shopping', value: 300 },
-  { name: 'Utilities', value: 200 },
-];
 const COLORS = ['#22c55e', '#f59e0b', '#3b82f6', '#8b5cf6'];
 
 interface DashboardProps {
@@ -30,6 +14,18 @@ interface DashboardProps {
   healthScore?: number;
   healthScoreCategory?: string;
   insight?: string;
+  totalExpenses?: number;
+  owedToYou?: number;
+  activeGroups?: number;
+  recentTransactions?: {
+    title: string;
+    group: string;
+    date: string;
+    amount: string;
+    status: string;
+  }[];
+  monthlyData?: any[];
+  categoryData?: any[];
 }
 
 // A premium count up component
@@ -57,43 +53,42 @@ function CountUp({ end, prefix = "", suffix = "" }: { end: number, prefix?: stri
   return <span>{prefix}{Math.floor(count).toLocaleString()}{suffix}</span>;
 }
 
-export function DashboardView({ mock, userId, healthScore, healthScoreCategory, insight }: DashboardProps) {
-  const [timeframe, setTimeframe] = useState("Last 6 Months");
-  
-  useEffect(() => {
-    trackEvent("view_dashboard", { mock });
-  }, [mock]);
-
-  const isDataLoaded = timeframe === "Last 6 Months";
-  const finalScore = isDataLoaded ? (healthScore || 92) : 0;
-  const finalCategory = isDataLoaded ? (healthScoreCategory || "Excellent") : "No Data";
-
-  const currentMonthlyData = isDataLoaded ? monthlyData : [
+export function DashboardView({ 
+  mock, 
+  userId, 
+  healthScore, 
+  healthScoreCategory, 
+  insight,
+  totalExpenses = 0,
+  owedToYou = 0,
+  activeGroups = 0,
+  recentTransactions = [],
+  monthlyData = [
     { name: 'Jan', expenses: 0, savings: 0 },
     { name: 'Feb', expenses: 0, savings: 0 },
     { name: 'Mar', expenses: 0, savings: 0 },
     { name: 'Apr', expenses: 0, savings: 0 },
     { name: 'May', expenses: 0, savings: 0 },
     { name: 'Jun', expenses: 0, savings: 0 },
-  ];
+  ],
+  categoryData = [{ name: 'No Data', value: 1 }]
+}: DashboardProps) {
+  const [timeframe, setTimeframe] = useState("Last 6 Months");
+  
+  useEffect(() => {
+    trackEvent("view_dashboard", { mock });
+  }, [mock]);
 
-  const currentCategoryData = isDataLoaded ? categoryData : [
-    { name: 'No Data', value: 1 }
-  ];
+  const isDataLoaded = activeGroups > 0 || totalExpenses > 0;
+  const finalScore = isDataLoaded ? (healthScore || 92) : 0;
+  const finalCategory = isDataLoaded ? (healthScoreCategory || "Excellent") : "No Data";
 
-  const totalExpenses = isDataLoaded ? 4250 : 0;
-  const owedToYou = isDataLoaded ? 850 : 0;
-  const activeGroups = isDataLoaded ? 4 : 0;
+  const currentMonthlyData = monthlyData;
+  const currentCategoryData = categoryData;
   
   const currentInsight = isDataLoaded 
     ? (insight || "I noticed your dining expenses have increased by 23% this month. Consider cooking at home to improve your health score.")
     : "No recent transactions found. Start using BillBee to get personalized AI insights and health scores.";
-
-  const recentTransactions = isDataLoaded ? [
-    { title: "Dinner at Joe's", group: "Paris Trip 2026", date: "Today, 8:45 PM", amount: "$125.00", status: "Settled" },
-    { title: "Airbnb Booking", group: "Weekend Getaway", date: "Yesterday", amount: "$450.00", status: "Pending" },
-    { title: "Uber Ride", group: "Paris Trip 2026", date: "May 12", amount: "$32.50", status: "Settled" },
-  ] : [];
 
   return (
     <div className="flex-1 bg-slate-50 dark:bg-slate-950 px-6 pt-32 pb-10 md:px-10 md:pt-32 font-sans min-h-screen">
