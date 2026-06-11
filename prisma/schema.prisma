@@ -13,6 +13,8 @@ model User {
   email                  String           @unique
   name                   String?
   financial_health_score Int              @default(0)
+  default_currency       String           @default("USD")
+  monthly_budget         Float?
   last_active_at         DateTime         @default(now())
   created_at             DateTime         @default(now())
   updated_at             DateTime         @updatedAt

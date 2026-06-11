@@ -4,6 +4,7 @@ import Link from "next/link";
 import { UserButton, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState } from "react";
+import { Settings } from "lucide-react";
 
 export function Navbar() {
   const { isSignedIn } = useUser();
@@ -38,7 +39,15 @@ export function Navbar() {
 
         <div className="flex items-center space-x-3">
           {isSignedIn ? (
-            <UserButton afterSignOutUrl="/" />
+            <UserButton afterSignOutUrl="/">
+              <UserButton.MenuItems>
+                <UserButton.Link
+                  label="Profile & Settings"
+                  labelIcon={<Settings className="w-4 h-4" />}
+                  href="/profile"
+                />
+              </UserButton.MenuItems>
+            </UserButton>
           ) : (
             <>
               <SignInButton mode="modal">
