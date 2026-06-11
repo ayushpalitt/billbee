@@ -1,8 +1,13 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-export function generatePdfReport(transactions: any[], userName: string = "User") {
-  const doc = new jsPDF();
+export function generateServerPdfReport(transactions: any[], userName: string = "User"): Buffer {
+  // Use 'pt' and specify format to ensure server-side compatibility without window
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4"
+  });
 
   // Add Branding Header
   doc.setFillColor(34, 197, 94); // Tailwind green-500
@@ -15,7 +20,7 @@ export function generatePdfReport(transactions: any[], userName: string = "User"
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text("Expense Report", 170, 20);
+  doc.text("Monthly Expense Report", 160, 20);
 
   // Add Report Info
   doc.setTextColor(30, 41, 59); // Tailwind slate-800
@@ -34,11 +39,11 @@ export function generatePdfReport(transactions: any[], userName: string = "User"
 
   transactions.forEach(tx => {
     const transactionData = [
-      tx.date,
-      tx.title,
+      tx.date ? new Date(tx.date).toLocaleDateString() : 'N/A',
+      tx.description || tx.title || 'Unknown',
       tx.group || "Personal",
-      tx.status,
-      tx.amount
+      tx.status || 'PAID',
+      `$${Number(tx.amount).toFixed(2)}`
     ];
     tableRows.push(transactionData);
   });
@@ -53,6 +58,7 @@ export function generatePdfReport(transactions: any[], userName: string = "User"
     styles: { font: 'helvetica', fontSize: 10, cellPadding: 4 },
   });
 
-  // Save the PDF
-  doc.save(`BillBee_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+  // Get raw output as arraybuffer, convert to node Buffer
+  const arrayBuffer = doc.output("arraybuffer");
+  return Buffer.from(arrayBuffer);
 }

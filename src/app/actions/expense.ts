@@ -68,3 +68,30 @@ export async function transferExpenseAction(formData: FormData) {
   revalidatePath(`/dashboard`);
   revalidatePath(`/groups/${groupId}`);
 }
+
+export async function settleUpAction(formData: FormData) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const payeeId = formData.get("payeeId") as string;
+  const groupId = formData.get("groupId") as string;
+  const amount = parseFloat(formData.get("amount") as string);
+  const paymentMethod = formData.get("paymentMethod") as string;
+
+  if (!payeeId || isNaN(amount) || amount <= 0) {
+    return { error: "Invalid settlement data" };
+  }
+
+  await ExpenseService.settleUp({
+    payerId: userId,
+    payeeId,
+    amount,
+    paymentMethod: paymentMethod || "CASH",
+  });
+
+  revalidatePath(`/dashboard`);
+  if (groupId) {
+    revalidatePath(`/groups/${groupId}`);
+  }
+  return { success: true };
+}

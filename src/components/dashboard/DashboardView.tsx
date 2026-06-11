@@ -8,6 +8,8 @@ import { Activity, TrendingUp, AlertCircle, CheckCircle2, ArrowUpRight, ArrowDow
 import { CreateGroupDialog } from "@/components/groups/CreateGroupDialog";
 import { AddPersonalExpenseDialog } from "@/components/expenses/AddPersonalExpenseDialog";
 import { TransferExpenseDropdown } from "@/components/expenses/TransferExpenseDropdown";
+import { generatePdfReport } from "@/lib/pdf-generator";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
 const COLORS = ['#22c55e', '#f59e0b', '#3b82f6', '#8b5cf6'];
@@ -82,7 +84,16 @@ export function DashboardView({
   categoryData = [{ name: 'No Data', value: 1 }],
   userGroups = []
 }: DashboardProps) {
-  const [timeframe, setTimeframe] = useState("Last 6 Months");
+  const { user } = useUser();
+  const [timeframe, setTimeframe] = useState("This Month");
+  const [greeting, setGreeting] = useState("Hello");
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) setGreeting("Good Morning");
+    else if (hour >= 12 && hour < 17) setGreeting("Good Afternoon");
+    else setGreeting("Good Evening");
+  }, []);
   
   useEffect(() => {
     trackEvent("view_dashboard", { mock });
@@ -105,7 +116,9 @@ export function DashboardView({
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-4 max-w-[1600px] mx-auto">
         <div>
-          <h1 className="text-3xl font-extrabold font-jakarta text-slate-900 dark:text-white tracking-tight">Good Morning 👋</h1>
+          <h1 className="text-3xl font-extrabold font-jakarta text-slate-900 dark:text-white tracking-tight">
+            {greeting}{user?.firstName ? `, ${user.firstName}` : ''} 👋
+          </h1>
           <p className="text-slate-500 font-medium mt-1">Here is the latest overview of your group finances.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -130,7 +143,10 @@ export function DashboardView({
             <CreateGroupDialog />
           </div>
           <button 
-            onClick={() => trackEvent("pdf_export", { source: "dashboard" })}
+            onClick={() => {
+              trackEvent("pdf_export", { source: "dashboard" });
+              generatePdfReport(recentTransactions, "User");
+            }}
             className="flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md"
           >
             <Download className="w-4 h-4" /> Export

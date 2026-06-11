@@ -3,6 +3,7 @@ import { GroupService } from '@/lib/services/group-service';
 import { redirect } from 'next/navigation';
 import { AddExpenseDialog } from '@/components/expenses/AddExpenseDialog';
 import { AddMemberDialog } from '@/components/groups/AddMemberDialog';
+import { SettleUpDialog } from '@/components/expenses/SettleUpDialog';
 
 export default async function GroupDetailsPage({ params }: any) {
   const { id } = await params;
@@ -22,6 +23,7 @@ export default async function GroupDetailsPage({ params }: any) {
           </div>
           <div className="flex items-center gap-3">
             <AddMemberDialog groupId={group.id} />
+            <SettleUpDialog groupId={group.id} members={group.members} currentUserId={userId} />
             <AddExpenseDialog groupId={group.id} />
           </div>
       </div>
