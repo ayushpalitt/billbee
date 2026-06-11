@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { UserButton, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState } from "react";
@@ -8,6 +9,7 @@ import { Settings } from "lucide-react";
 
 export function Navbar() {
   const { isSignedIn } = useUser();
+  const pathname = usePathname();
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -28,12 +30,27 @@ export function Navbar() {
         </Link>
         
         <div className="hidden md:flex items-center space-x-8">
-          <Link href="/features" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">Features</Link>
-          <Link href="/how-it-works" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">How It Works</Link>
-          <Link href="/ai-insights" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">AI Insights</Link>
-          <Link href="/pricing" className="text-sm font-semibold font-jakarta text-slate-700 dark:text-slate-300 hover:text-slate-900 transition-colors">Pricing</Link>
+          {[
+            { href: "/features", label: "Features" },
+            { href: "/how-it-works", label: "How It Works" },
+            { href: "/ai-insights", label: "AI Insights" },
+            { href: "/pricing", label: "Pricing" }
+          ].map((link) => (
+            <Link 
+              key={link.href} 
+              href={link.href} 
+              className={`inline-block text-sm font-jakarta transition-all duration-200 hover:scale-90 ${pathname === link.href ? 'font-bold text-green-600' : 'font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900'}`}
+            >
+              {link.label}
+            </Link>
+          ))}
           {isSignedIn && (
-            <Link href="/dashboard" className="text-sm font-bold font-jakarta text-green-600 hover:text-green-700 transition-colors">Dashboard</Link>
+            <Link 
+              href="/dashboard" 
+              className={`inline-block text-sm font-bold font-jakarta transition-all duration-200 hover:scale-90 ${pathname === '/dashboard' ? 'text-green-600' : 'text-green-600 hover:text-green-700'}`}
+            >
+              Dashboard
+            </Link>
           )}
         </div>
 
