@@ -13,7 +13,7 @@ export default function PricingPage() {
       <div className="relative z-10 flex flex-col items-center w-full">
         <div className="text-center px-4 max-w-3xl mx-auto mb-8">
           <h1 className="text-5xl md:text-7xl font-extrabold font-jakarta text-slate-900 dark:text-white tracking-tight mb-8">
-            Simple, <span className="text-transparent bg-clip-text bg-gradient-to-r from-bee-green to-emerald-400">Transparent</span> Pricing
+            Simple, <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-600">Transparent</span> Pricing
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
             Start organizing your group expenses for free, and upgrade to unlock the full power of our AI receipt scanning and health insights when you're ready.

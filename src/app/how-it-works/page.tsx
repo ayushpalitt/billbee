@@ -13,7 +13,7 @@ export default function HowItWorksPage() {
       <div className="relative z-10 flex flex-col items-center w-full">
         <div className="text-center px-4 max-w-3xl mx-auto mb-16">
           <h1 className="text-5xl md:text-7xl font-extrabold font-jakarta text-slate-900 dark:text-white tracking-tight mb-8">
-            How It <span className="text-transparent bg-clip-text bg-gradient-to-r from-bee-green to-emerald-400">Works</span>
+            How It <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-600">Works</span>
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
             From scanning receipts to settling debts, discover the seamless journey of managing your group finances with BillBee.

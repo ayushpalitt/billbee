@@ -12,10 +12,59 @@ export async function addExpenseAction(formData: FormData) {
   const description = formData.get("description") as string;
   const amount = parseFloat(formData.get("amount") as string);
   
-  if (!groupId || !description || isNaN(amount)) {
+  if (!description || isNaN(amount)) {
     return { error: "Invalid data" };
   }
 
-  await ExpenseService.addExpense(groupId, userId, amount, description);
+  // If a groupId is provided, we must split it among members. For now, we split equally among all members as a simple default.
+  // In a real app, the user would select the exact splits in the UI.
+  let splits: any[] | undefined = undefined;
+  
+  if (groupId) {
+    const { GroupService } = await import("@/lib/services/group-service");
+    const group = await GroupService.getGroupDetails(groupId);
+    if (group && group.members.length > 0) {
+      const splitAmount = amount / group.members.length;
+      splits = group.members.map((m: any) => ({ userId: m.user_id, amountOwed: splitAmount }));
+    }
+  }
+
+  await ExpenseService.addExpense({
+    groupId: groupId || undefined,
+    userId,
+    amount,
+    category: "General",
+    description,
+    splits
+  });
+  
+  if (groupId) {
+    revalidatePath(`/groups/${groupId}`);
+  } else {
+    revalidatePath(`/dashboard`);
+  }
+}
+
+export async function transferExpenseAction(formData: FormData) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const expenseId = formData.get("expenseId") as string;
+  const groupId = formData.get("groupId") as string;
+  const amount = parseFloat(formData.get("amount") as string);
+
+  if (!expenseId || !groupId || isNaN(amount)) {
+    return { error: "Invalid data" };
+  }
+
+  const { GroupService } = await import("@/lib/services/group-service");
+  const group = await GroupService.getGroupDetails(groupId);
+  if (!group || group.members.length === 0) return { error: "Group not found or empty" };
+
+  const splitAmount = amount / group.members.length;
+  const splits = group.members.map((m: any) => ({ userId: m.user_id, amountOwed: splitAmount }));
+
+  await ExpenseService.transferExpenseToGroup(expenseId, groupId, splits);
+  revalidatePath(`/dashboard`);
   revalidatePath(`/groups/${groupId}`);
 }

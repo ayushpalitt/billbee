@@ -11,9 +11,10 @@ export default async function GroupsPage() {
   const groups = await GroupService.getGroupsForUser(userId);
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Your Groups</h1>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-32 pb-20 px-6 md:px-10 font-sans">
+      <div className="max-w-5xl mx-auto space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-extrabold font-jakarta text-slate-900 dark:text-white">Your Groups</h1>
         <CreateGroupDialog />
       </div>
 
@@ -35,6 +36,7 @@ export default async function GroupsPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { GroupService } from '@/lib/services/group-service';
 import { redirect } from 'next/navigation';
 import { AddExpenseDialog } from '@/components/expenses/AddExpenseDialog';
+import { AddMemberDialog } from '@/components/groups/AddMemberDialog';
 
 export default async function GroupDetailsPage({ params }: any) {
   const { id } = await params;
@@ -12,13 +13,17 @@ export default async function GroupDetailsPage({ params }: any) {
   if (!group) redirect('/groups');
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex justify-between items-center pb-4 border-b">
-        <div>
-          <h1 className="text-3xl font-bold">{group.name}</h1>
-          <p className="text-muted-foreground">{group.members.length} members</p>
-        </div>
-        <AddExpenseDialog groupId={group.id} />
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-32 pb-20 px-6 md:px-10 font-sans">
+      <div className="max-w-5xl mx-auto space-y-6">
+        <div className="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
+          <div>
+            <h1 className="text-3xl font-extrabold font-jakarta text-slate-900 dark:text-white">{group.name}</h1>
+            <p className="text-muted-foreground">{group.members.length} members</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <AddMemberDialog groupId={group.id} />
+            <AddExpenseDialog groupId={group.id} />
+          </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6">
@@ -39,6 +44,7 @@ export default async function GroupDetailsPage({ params }: any) {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }

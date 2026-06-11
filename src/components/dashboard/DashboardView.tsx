@@ -4,7 +4,11 @@ import { motion } from "framer-motion";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { trackEvent } from "@/lib/analytics/track-event";
 import { useEffect, useState } from "react";
-import { Activity, TrendingUp, AlertCircle, CheckCircle2, ArrowUpRight, ArrowDownRight, Wallet, Users, Receipt, Download } from "lucide-react";
+import { Activity, TrendingUp, AlertCircle, CheckCircle2, ArrowUpRight, ArrowDownRight, Wallet, Users, Receipt, Download, UsersRound } from "lucide-react";
+import { CreateGroupDialog } from "@/components/groups/CreateGroupDialog";
+import { AddPersonalExpenseDialog } from "@/components/expenses/AddPersonalExpenseDialog";
+import { TransferExpenseDropdown } from "@/components/expenses/TransferExpenseDropdown";
+import Link from "next/link";
 
 const COLORS = ['#22c55e', '#f59e0b', '#3b82f6', '#8b5cf6'];
 
@@ -18,14 +22,18 @@ interface DashboardProps {
   owedToYou?: number;
   activeGroups?: number;
   recentTransactions?: {
+    id?: string;
     title: string;
     group: string;
     date: string;
     amount: string;
     status: string;
+    isPersonal?: boolean;
+    rawAmount?: number;
   }[];
   monthlyData?: any[];
   categoryData?: any[];
+  userGroups?: any[];
 }
 
 // A premium count up component
@@ -71,7 +79,8 @@ export function DashboardView({
     { name: 'May', expenses: 0, savings: 0 },
     { name: 'Jun', expenses: 0, savings: 0 },
   ],
-  categoryData = [{ name: 'No Data', value: 1 }]
+  categoryData = [{ name: 'No Data', value: 1 }],
+  userGroups = []
 }: DashboardProps) {
   const [timeframe, setTimeframe] = useState("Last 6 Months");
   
@@ -110,6 +119,16 @@ export function DashboardView({
             <option>Last 6 Months</option>
             <option>This Year</option>
           </select>
+          <Link
+            href="/groups"
+            className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm"
+          >
+            <UsersRound className="w-4 h-4" /> Manage Groups
+          </Link>
+          <div className="flex items-center gap-2">
+            <AddPersonalExpenseDialog />
+            <CreateGroupDialog />
+          </div>
           <button 
             onClick={() => trackEvent("pdf_export", { source: "dashboard" })}
             className="flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md"
@@ -235,19 +254,32 @@ export function DashboardView({
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  {recentTransactions.length > 0 ? recentTransactions.map((tx, i) => (
-                    <tr key={i} className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  {recentTransactions.length > 0 ? recentTransactions.map((tx, i) => {
+                    const amountNumber = parseFloat(tx.amount.replace(/[^0-9.-]+/g,""));
+                    return (
+                    <tr key={tx.id || i} className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                       <td className="p-4 font-medium text-slate-900 dark:text-white">{tx.title}</td>
-                      <td className="p-4 text-slate-500">{tx.group}</td>
+                      <td className="p-4 text-slate-500">
+                        {tx.isPersonal ? (
+                          <span className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 px-2 py-1 rounded text-xs font-semibold">Personal</span>
+                        ) : (
+                          tx.group
+                        )}
+                      </td>
                       <td className="p-4 text-slate-500">{tx.date}</td>
                       <td className="p-4 font-bold text-slate-900 dark:text-white">{tx.amount}</td>
                       <td className="p-4">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold whitespace-nowrap ${tx.status === 'Settled' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'}`}>
-                          {tx.status}
-                        </span>
+                        {tx.isPersonal ? (
+                          <TransferExpenseDropdown expenseId={tx.id!} amount={amountNumber} groups={userGroups} />
+                        ) : (
+                          <span className={`px-2 py-1 rounded-full text-xs font-bold whitespace-nowrap ${tx.status === 'Settled' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'}`}>
+                            {tx.status}
+                          </span>
+                        )}
                       </td>
                     </tr>
-                  )) : (
+                    );
+                  }) : (
                     <tr>
                       <td colSpan={5} className="p-8 text-center text-slate-500 font-medium">No recent transactions found for this timeframe.</td>
                     </tr>

@@ -4,7 +4,10 @@ export const ANALYTICS_EVENTS = {
   SIGN_UP: "sign_up",
   CREATE_GROUP: "create_group",
   INVITE_MEMBER: "invite_member",
+  ADD_GROUP_MEMBER: "add_group_member",
   ADD_EXPENSE: "add_expense",
+  ADD_PERSONAL_EXPENSE: "add_personal_expense",
+  TRANSFER_EXPENSE: "transfer_expense",
   SETTLEMENT_COMPLETED: "settlement_completed",
   PDF_EXPORT: "pdf_export",
   

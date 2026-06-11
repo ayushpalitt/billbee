@@ -5,8 +5,8 @@ export const trackEvent = async (
   eventName: AnalyticsEventName,
   metadata?: Record<string, string | number | boolean | null | undefined>
 ) => {
-  if (typeof window !== "undefined" && window.dataLayer) {
-    window.dataLayer.push({
+  if (typeof window !== "undefined" && (window as any).dataLayer) {
+    (window as any).dataLayer.push({
       event: eventName,
       ...metadata,
     });
@@ -35,9 +35,3 @@ export const trackEvent = async (
   }
 };
 
-// Global types for GTM
-declare global {
-  interface Window {
-    dataLayer: any[];
-  }
-}

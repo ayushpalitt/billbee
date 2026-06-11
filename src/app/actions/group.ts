@@ -16,3 +16,21 @@ export async function createGroupAction(formData: FormData) {
   revalidatePath("/groups");
   redirect(`/groups/${group.id}`);
 }
+
+export async function addGroupMemberAction(formData: FormData) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const groupId = formData.get("groupId") as string;
+  const email = formData.get("email") as string;
+  
+  if (!groupId || !email) return { error: "Group ID and email are required" };
+
+  try {
+    await GroupService.addGroupMember(groupId, email);
+    revalidatePath(`/groups/${groupId}`);
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Failed to add member" };
+  }
+}

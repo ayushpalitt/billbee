@@ -11,7 +11,7 @@ export function CreateGroupDialog() {
     <>
       <button 
         onClick={() => setIsOpen(true)}
-        className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md font-medium transition-colors"
+        className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg"
       >
         + Create Group
       </button>

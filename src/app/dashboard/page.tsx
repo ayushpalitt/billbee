@@ -4,6 +4,7 @@ import { calculateFinancialHealthScore, getHealthScoreCategory } from '@/lib/ai/
 import { DashboardView } from '@/components/dashboard/DashboardView';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
+import { GroupService } from '@/lib/services/group-service';
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -38,9 +39,14 @@ export default async function DashboardPage() {
       where: { user_id: userId }
     }),
     prisma.expense.findMany({
-      where: { group: { members: { some: { user_id: userId } } } },
+      where: {
+        OR: [
+          { group: { members: { some: { user_id: userId } } } },
+          { created_by: userId, group_id: null }
+        ]
+      },
       orderBy: { created_at: 'desc' },
-      take: 5,
+      take: 10,
       include: { group: true }
     })
   ]);
@@ -50,12 +56,16 @@ export default async function DashboardPage() {
   const activeGroups = activeGroupsResult;
 
   const recentTransactions = recentTransactionsResult.map(tx => ({
+    id: tx.id,
     title: tx.description,
-    group: tx.group.name,
+    group: tx.group?.name || 'Personal',
     date: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(tx.created_at),
     amount: new Intl.NumberFormat('en-US', { style: 'currency', currency: tx.currency }).format(tx.amount),
-    status: 'Pending'
+    status: tx.group_id ? 'Pending' : 'Personal',
+    isPersonal: tx.group_id === null
   }));
+
+  const userGroups = await GroupService.getGroupsForUser(userId);
 
   // Empty charts for now to ensure clean slate
   const monthlyData = [
@@ -81,6 +91,7 @@ export default async function DashboardPage() {
       recentTransactions={recentTransactions}
       monthlyData={monthlyData}
       categoryData={categoryData}
+      userGroups={userGroups}
     />
   );
 }

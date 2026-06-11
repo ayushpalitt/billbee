@@ -45,12 +45,20 @@ export function Navbar() {
             </Link>
           ))}
           {isSignedIn && (
-            <Link 
-              href="/dashboard" 
-              className={`inline-block text-sm font-bold font-jakarta transition-all duration-200 hover:scale-90 ${pathname === '/dashboard' ? 'text-green-600' : 'text-green-600 hover:text-green-700'}`}
-            >
-              Dashboard
-            </Link>
+            <>
+              <Link 
+                href="/groups" 
+                className={`inline-block text-sm font-bold font-jakarta transition-all duration-200 hover:scale-90 ${pathname.startsWith('/groups') ? 'text-green-600' : 'text-green-600 hover:text-green-700'}`}
+              >
+                Groups
+              </Link>
+              <Link 
+                href="/dashboard" 
+                className={`inline-block text-sm font-bold font-jakarta transition-all duration-200 hover:scale-90 ${pathname === '/dashboard' ? 'text-green-600' : 'text-green-600 hover:text-green-700'}`}
+              >
+                Dashboard
+              </Link>
+            </>
           )}
         </div>
 
