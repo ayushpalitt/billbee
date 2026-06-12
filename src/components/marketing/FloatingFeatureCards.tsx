@@ -49,13 +49,27 @@ export function FloatingFeatureCards() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: idx * 0.1 }}
-            className="group relative h-[350px] w-full [transform-style:preserve-3d]"
+            className="relative h-[350px] w-full cursor-pointer"
+            style={{ perspective: 1000 }}
           >
             {/* The 3D flip container */}
-            <div className="absolute inset-0 h-full w-full rounded-3xl transition-all duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-xl cursor-pointer">
+            <motion.div 
+              className="absolute inset-0 h-full w-full rounded-3xl shadow-xl"
+              style={{ transformStyle: "preserve-3d" }}
+              initial="rest"
+              whileHover="hover"
+              variants={{
+                rest: { rotateY: 0 },
+                hover: { rotateY: 180 }
+              }}
+              transition={{ duration: 0.7, ease: "easeInOut" }}
+            >
               
               {/* FRONT OF CARD */}
-              <div className="absolute inset-0 h-full w-full rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 flex flex-col items-center justify-center text-center [backface-visibility:hidden]">
+              <div 
+                className="absolute inset-0 h-full w-full rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 flex flex-col items-center justify-center text-center"
+                style={{ backfaceVisibility: "hidden" }}
+              >
                 <div className={`p-4 rounded-full bg-gradient-to-br ${feature.gradient} mb-6`}>
                   {feature.icon}
                 </div>
@@ -68,16 +82,34 @@ export function FloatingFeatureCards() {
               </div>
 
               {/* BACK OF CARD */}
-              <div className={`absolute inset-0 h-full w-full rounded-3xl bg-gradient-to-br from-blue-900 to-yellow-600 overflow-hidden border border-slate-200/20 p-8 flex flex-col items-center justify-center text-center [transform:rotateY(180deg)] [backface-visibility:hidden] transition-colors duration-500`}>
+              <div 
+                className={`absolute inset-0 h-full w-full rounded-3xl bg-gradient-to-br from-blue-900 to-yellow-600 overflow-hidden border border-slate-200/20 p-8 flex flex-col items-center justify-center text-center transition-colors duration-500`}
+                style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+              >
                 
-                {/* Flying Bee Animation */}
-                <div className="absolute top-1/3 -right-16 text-4xl opacity-0 group-hover:opacity-100 group-hover:-translate-x-[500px] transition-all duration-[2000ms] ease-out pointer-events-none z-0">
+                {/* Flying Bee Animation 1 */}
+                <motion.div 
+                  className="absolute top-1/3 -right-16 text-4xl pointer-events-none z-0"
+                  variants={{
+                    rest: { opacity: 0, x: 0 },
+                    hover: { opacity: 1, x: -500 }
+                  }}
+                  transition={{ duration: 2, ease: "easeOut" }}
+                >
                   🐝
-                </div>
+                </motion.div>
 
-                <div className="absolute bottom-1/3 -right-16 text-3xl opacity-0 group-hover:opacity-60 group-hover:-translate-x-[500px] transition-all duration-[2500ms] ease-out pointer-events-none z-0 delay-150">
+                {/* Flying Bee Animation 2 */}
+                <motion.div 
+                  className="absolute bottom-1/3 -right-16 text-3xl pointer-events-none z-0"
+                  variants={{
+                    rest: { opacity: 0, x: 0 },
+                    hover: { opacity: 0.6, x: -500 }
+                  }}
+                  transition={{ duration: 2.5, ease: "easeOut", delay: 0.15 }}
+                >
                   🐝
-                </div>
+                </motion.div>
 
                 <h3 className="relative z-10 text-xl font-bold font-jakarta text-white mb-4 drop-shadow-md">
                   {feature.title}
@@ -87,7 +119,7 @@ export function FloatingFeatureCards() {
                 </p>
               </div>
 
-            </div>
+            </motion.div>
           </motion.div>
         ))}
       </div>
