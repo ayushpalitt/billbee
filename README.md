@@ -8,6 +8,8 @@
 
 **BillBee** is a modern, venture-backed style SaaS application designed to effortlessly manage personal and group expenses. Built with a focus on performance, security, and a premium user experience, BillBee automates the tedious parts of shared finances.
 
+🌍 **Live Demo:** [https://billbee.vercel.app/](https://billbee.vercel.app/)
+
 ---
 
 ## ✨ Key Features
